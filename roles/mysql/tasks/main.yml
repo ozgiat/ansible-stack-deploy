@@ -1,0 +1,27 @@
+---
+- name: install tools
+  apt: 
+    name: ['python-mysqldb'] 
+
+- name: install mysql server
+  apt: name=mysql-server state=present update_cache=yes
+    
+- name: ensure mysql listening to all ports
+  lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address 
+              line="bind-address = {{ ansible_default_ipv4.address }}" #get host ip address
+  notify: restart mysql
+  
+- name: ensure mysql started 
+  service: name=mysql state=started enabled=yes
+  notify: restart mysql
+
+- name: doublecheck mysql is started
+  command: service mysql start
+
+- name: create demo database
+  mysql_db: name={{ db_name }} state=present login_unix_socket=/var/run/mysqld/mysqld.sock
+  
+
+- name: create demo user
+  mysql_user: name={{ db_user_name }} password={{ db_user_pass }} priv={{ db_name}}.*:ALL 
+              host='{{ db_user_host }}' state=present

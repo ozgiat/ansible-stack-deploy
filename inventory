@@ -1,0 +1,14 @@
+[control]
+docker_control_1 ansible_connection=docker
+
+[database]
+docker_db_1 ansible_connection=docker
+
+[loadbalancer]
+docker_lb1_1 ansible_connection=docker
+
+[webserver]
+docker_app1_1 ansible_connection=docker
+docker_app2_1 ansible_connection=docker
+
+

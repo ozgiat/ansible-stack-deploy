@@ -1,0 +1,29 @@
+---
+- name: install web components
+  apt: 
+    name: ['python-pip', 'python-virtualenv', 'python-mysqldb', 'vim']
+
+- name: copy demo-app source
+  copy: src=demo/app/ dest=/var/www/demo mode=0755
+  notify: restart apache2
+      
+- name: copy demo-app source
+  template: src=demo.wsgi.j2 dest=/var/www/demo/demo.wsgi mode=0755
+  notify: restart apache2
+      
+
+- name: copy apache2 virtual host config 
+  copy: src=demo/demo.conf dest=/etc/apache2/sites-available
+  notify: restart apache2
+
+- name: setup python virtualenv
+  pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.flask_api
+  notify: restart apache2
+
+
+- name: activate demo apache site
+  file: src=/etc/apache2/sites-available/demo.conf dest=/etc/apache2/sites-enabled/demo.conf state=link #symlink
+  notify: restart apache2
+
+
+  

@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+
+  lb1:
+    image: myubuntu
+    ports:
+      - "8080:80"
+      - "5000:22"
+    hostname: ansible_lb1_1
+    networks:
+      - net
+  app1:
+    image: myubuntu
+    ports:
+      - "80:80"
+      - "5001:22"
+    hostname: ansible_app1_1
+    networks:
+      - net
+    depends_on:
+      - lb1
+  app2:
+    image: myubuntu
+    ports:
+      - "81:80"
+      - "5002:22"
+    hostname: ansible_app2_1
+    networks:
+      - net
+    depends_on:
+      - lb1
+  db:
+    image: myubuntu
+    ports:
+      - "3306:3306"
+      - "5003:22"
+    hostname: ansible_db_1
+    networks:
+      - net
+    depends_on:
+      - lb1
+  control:
+    image: myubuntu
+    ports:
+      - "5004:22"
+    networks:
+      - net
+    depends_on:
+      - lb1
+
+networks:
+  net:
+    driver: bridge

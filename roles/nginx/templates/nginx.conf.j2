@@ -1,0 +1,14 @@
+upstream {{ item.key }} {
+{% for servers in groups.webserver %}
+    server {{ servers }}:{{ item.value.backend }};
+{% endfor %}
+}
+
+
+server { 
+    listen {{ item.value.frontend }};
+
+    location / {
+        proxy_pass http://{{ item.key }};
+    }
+}
